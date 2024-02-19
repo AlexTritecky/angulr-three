@@ -1,0 +1,11 @@
+<div class="header">
+  <div class="route-container">
+    <a
+      *ngFor="let link of navLinks"
+      class="route"
+      [routerLink]="link.path"
+      routerLinkActive="active"
+      >{{ link.label }}</a
+    >
+  </div>
+</div>

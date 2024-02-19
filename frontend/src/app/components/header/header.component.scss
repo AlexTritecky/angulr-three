@@ -1,0 +1,28 @@
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px 16px;
+  background: #393d3f;
+  border-bottom: 1px solid #62929e;
+}
+
+.route-container {
+  display: flex;
+  gap: 16px;
+}
+
+.route {
+  display: inline-block;
+  padding: 8px 16px;
+  color: #fdfdff;
+  font-weight: bold;
+  border: none;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+  cursor: pointer;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #393d3f, #62929e);
+  overflow: hidden;
+}
