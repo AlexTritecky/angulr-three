@@ -7,6 +7,7 @@ import { Lesson06Component } from './lesson-06/lesson-06.component';
 import { Lesson07Component } from './lesson-07/lesson-07.component';
 import { Lesson08Component } from './lesson-08/lesson-08.component';
 import { Lesson09Component } from './lesson-09/lesson-09.component';
+import { Lesson10Component } from './lesson-10/lesson-10.component';
 
 export const COMPONENTS = [
   Lesson01Component,
@@ -18,4 +19,5 @@ export const COMPONENTS = [
   Lesson07Component,
   Lesson08Component,
   Lesson09Component,
+  Lesson10Component,
 ];

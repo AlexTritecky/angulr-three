@@ -10,6 +10,7 @@ import { Lesson06Component } from './modules/lesson-06/lesson-06.component';
 import { Lesson07Component } from './modules/lesson-07/lesson-07.component';
 import { Lesson08Component } from './modules/lesson-08/lesson-08.component';
 import { Lesson09Component } from './modules/lesson-09/lesson-09.component';
+import { Lesson10Component } from './modules/lesson-10/lesson-10.component';
 
 const routes: Routes = [
   {
@@ -59,6 +60,11 @@ const routes: Routes = [
   {
     path: 'lesson-09',
     component: Lesson09Component,
+  },
+
+  {
+    path: 'lesson-10',
+    component: Lesson10Component,
   },
 ];
 
