@@ -10,7 +10,7 @@ import * as THREE from 'three';
 @Component({
   selector: 'app-lesson-01',
   templateUrl: './lesson-01.component.html',
-  styleUrls: ['./lesson-01.component.scss'], // Note: Use styleUrls in an array format
+  styleUrls: ['./lesson-01.component.scss'],
 })
 export class Lesson01Component implements AfterViewInit {
   @ViewChild('canvas', { static: true })
