@@ -1,23 +1,22 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { gsap } from 'gsap';
 import GUI from 'lil-gui';
+import { BaseThreeComponent } from '../../class/component';
 
 @Component({
   selector: 'app-lesson-07',
   templateUrl: './lesson-07.component.html',
-  styleUrls: ['./lesson-07.component.scss'], // Correct the property name
+  styleUrls: ['./lesson-07.component.scss'],
 })
-export class Lesson07Component implements AfterViewInit {
+export class Lesson07Component extends BaseThreeComponent {
   @ViewChild('canvas', { static: true })
-  private canvasRef!: ElementRef<HTMLCanvasElement>;
+  protected override canvasRef!: ElementRef<HTMLCanvasElement>;
 
-  private scene!: THREE.Scene;
-  private camera!: THREE.PerspectiveCamera;
-  private renderer!: THREE.WebGLRenderer;
-  private controls!: OrbitControls;
   private material!: THREE.MeshBasicMaterial;
+  private mesh!: THREE.Mesh;
+  private gui!: GUI;
 
   private debugObject = {
     color: 0xff0000,
@@ -30,51 +29,20 @@ export class Lesson07Component implements AfterViewInit {
     },
     subdivision: 30,
   };
-  private frameId!: number;
 
-  private gui!: GUI;
+  constructor() {
+    super();
+  }
 
-  private mesh!: THREE.Mesh;
-
-  constructor() {}
-
-  ngAfterViewInit(): void {
-    this.initThree();
+  protected initScene(): void {
+    this.scene.background = new THREE.Color(0x393d3f);
     this.addMesh();
     this.setupGui();
-    this.animate();
   }
 
-  ngOnDestroy(): void {
-    if (this.frameId) {
-      cancelAnimationFrame(this.frameId);
-    }
-    if (this.gui) this.gui.destroy();
-  }
-
-  private initThree(): void {
-    this.scene = new THREE.Scene();
-
-    const sizes = {
-      width: window.innerWidth,
-      height: window.innerHeight,
-    };
-
-    const aspectRatio = sizes.width / sizes.height;
-    this.camera = new THREE.PerspectiveCamera(75, aspectRatio, 0.1, 100);
-    this.camera.position.z = 3;
-
-    this.renderer = new THREE.WebGLRenderer({
-      canvas: this.canvasRef.nativeElement,
-    });
-    this.renderer.setSize(sizes.width, sizes.height);
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-    this.controls = new OrbitControls(
-      this.camera,
-      this.canvasRef.nativeElement
-    );
-    this.controls.enableDamping = true;
+  protected addObjects(): void {
+    this.addMesh();
+    this.setupGui();
   }
 
   private addMesh(): void {
@@ -97,13 +65,20 @@ export class Lesson07Component implements AfterViewInit {
   private setupGui(): void {
     this.gui = new GUI();
     this.gui
-      .add(this.debugObject, 'subdivision', 1, 10, 1)
+      .add(this.debugObject, 'subdivision', 1, 100, 1)
+      .name('Subdivision')
       .onFinishChange(this.updateGeometry.bind(this));
+
     this.gui
       .addColor(this.debugObject, 'color')
+      .name('Color')
       .onChange(this.updateMaterialColor.bind(this));
-    this.gui.add(this.debugObject, 'spin');
-    this.gui.add(this.material, 'wireframe');
+
+    this.gui.add(this.debugObject, 'spin').name('Spin!');
+
+    this.gui.add(this.debugObject, 'wireframe').onChange((value: boolean) => {
+      this.material.wireframe = value;
+    });
   }
 
   private updateGeometry(): void {
@@ -115,7 +90,7 @@ export class Lesson07Component implements AfterViewInit {
       this.debugObject.subdivision,
       this.debugObject.subdivision
     );
-    this.mesh.geometry.dispose(); // Dispose of the old geometry
+    this.mesh.geometry.dispose();
     this.mesh.geometry = geometry;
   }
 
@@ -123,12 +98,30 @@ export class Lesson07Component implements AfterViewInit {
     this.material.color.set(this.debugObject.color);
   }
 
-  private animate(): void {
-    const animate = () => {
-      this.controls.update();
-      this.renderer.render(this.scene, this.camera);
-      requestAnimationFrame(animate);
-    };
-    animate();
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
+    if (this.gui) this.gui.destroy();
+  }
+
+  protected initCamera(): void {
+    const aspectRatio =
+      this.canvasRef.nativeElement.clientWidth /
+      this.canvasRef.nativeElement.clientHeight;
+    this.camera = new THREE.PerspectiveCamera(75, aspectRatio, 0.1, 100);
+    this.camera.position.z = 3;
+  }
+
+  protected initRenderer(): void {
+    this.renderer = new THREE.WebGLRenderer({
+      canvas: this.canvasRef.nativeElement,
+      antialias: true, // Optional but can improve the visual quality
+    });
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  }
+
+  protected initControls(): void {
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.enableDamping = true;
   }
 }

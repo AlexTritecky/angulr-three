@@ -1,43 +1,28 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  HostListener,
-  ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { BaseThreeComponent } from '../../class/component';
 
 @Component({
   selector: 'app-lesson-04',
   templateUrl: './lesson-04.component.html',
-  styleUrls: ['./lesson-04.component.scss'], // Corrected property name
+  styleUrls: ['./lesson-04.component.scss'],
 })
-export class Lesson04Component implements AfterViewInit {
+export class Lesson04Component extends BaseThreeComponent {
   @ViewChild('canvas', { static: true })
-  private canvasRef!: ElementRef<HTMLCanvasElement>;
-
-  private scene!: THREE.Scene;
-  private camera!: THREE.PerspectiveCamera;
-  private renderer!: THREE.WebGLRenderer;
-  private controls!: OrbitControls;
+  protected override canvasRef!: ElementRef<HTMLCanvasElement>;
 
   private cursor = { x: 0, y: 0 };
 
-  constructor() {}
-
-  ngAfterViewInit(): void {
-    this.initScene();
-    this.initCamera();
-    this.initRenderer();
-    this.initControls();
-    this.animate();
+  constructor() {
+    super();
   }
 
-  private initScene(): void {
-    this.scene = new THREE.Scene();
+  protected initScene(): void {
     this.scene.background = new THREE.Color(0x393d3f);
+  }
 
+  protected addObjects(): void {
     const mesh = new THREE.Mesh(
       new THREE.BoxGeometry(1, 1, 1),
       new THREE.MeshBasicMaterial({ color: 0xff0000 })
@@ -45,7 +30,7 @@ export class Lesson04Component implements AfterViewInit {
     this.scene.add(mesh);
   }
 
-  private initCamera(): void {
+  protected initCamera(): void {
     const aspectRatio =
       this.canvasRef.nativeElement.clientWidth /
       this.canvasRef.nativeElement.clientHeight;
@@ -53,7 +38,7 @@ export class Lesson04Component implements AfterViewInit {
     this.camera.position.z = 3;
   }
 
-  private initRenderer(): void {
+  protected initRenderer(): void {
     this.renderer = new THREE.WebGLRenderer({
       canvas: this.canvasRef.nativeElement,
     });
@@ -63,26 +48,18 @@ export class Lesson04Component implements AfterViewInit {
     );
   }
 
-  private initControls(): void {
-    this.controls = new OrbitControls(
-      this.camera,
-      this.canvasRef.nativeElement
-    );
+  protected initControls(): void {
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.enableDamping = true;
-  }
-
-  private animate(): void {
-    const animate = () => {
-      this.controls.update();
-      this.renderer.render(this.scene, this.camera);
-      requestAnimationFrame(animate);
-    };
-    animate();
   }
 
   @HostListener('document:mousemove', ['$event'])
   onMouseMove(event: MouseEvent): void {
     this.cursor.x = (event.clientX / window.innerWidth) * 2 - 1;
     this.cursor.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  }
+
+  protected override update(): void {
+    super.update();
   }
 }

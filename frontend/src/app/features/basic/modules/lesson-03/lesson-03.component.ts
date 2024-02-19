@@ -1,36 +1,40 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import * as THREE from 'three';
+import { BaseThreeComponent } from '../../class/component';
 
 @Component({
   selector: 'app-lesson-03',
   templateUrl: './lesson-03.component.html',
-  styleUrls: ['./lesson-03.component.scss'], // Corrected property name
+  styleUrls: ['./lesson-03.component.scss'],
 })
-export class Lesson03Component implements AfterViewInit {
+export class Lesson03Component extends BaseThreeComponent {
   @ViewChild('canvas', { static: true })
-  private canvasRef!: ElementRef<HTMLCanvasElement>;
+  protected override canvasRef!: ElementRef<HTMLCanvasElement>;
 
-  private scene!: THREE.Scene;
-  private camera!: THREE.PerspectiveCamera;
-  private renderer!: THREE.WebGLRenderer;
+  private clock: THREE.Clock = new THREE.Clock();
+
   private mesh!: THREE.Mesh;
 
-  constructor() {}
-
-  ngAfterViewInit(): void {
-    this.initThree();
-    this.animate();
+  constructor() {
+    super();
   }
 
-  private initThree(): void {
-    this.scene = new THREE.Scene();
+  protected initScene(): void {
     this.scene.background = new THREE.Color(0x393d3f);
+  }
 
+  protected addObjects(): void {
+    this.createMesh();
+  }
+
+  private createMesh(): void {
     const geometry = new THREE.BoxGeometry(1, 1, 1);
     const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
     this.mesh = new THREE.Mesh(geometry, material);
     this.scene.add(this.mesh);
+  }
 
+  protected initCamera(): void {
     const sizes = {
       width: this.canvasRef.nativeElement.clientWidth,
       height: this.canvasRef.nativeElement.clientHeight,
@@ -43,34 +47,29 @@ export class Lesson03Component implements AfterViewInit {
       1000
     );
     this.camera.position.z = 3;
-    this.scene.add(this.camera);
+  }
 
+  protected initRenderer(): void {
     this.renderer = new THREE.WebGLRenderer({
       canvas: this.canvasRef.nativeElement,
     });
-    this.renderer.setSize(sizes.width, sizes.height);
+    this.renderer.setSize(
+      this.canvasRef.nativeElement.clientWidth,
+      this.canvasRef.nativeElement.clientHeight
+    );
   }
 
-  private animate(): void {
-    const clock = new THREE.Clock();
+  protected initControls(): void {
+    // Lesson03 does not use controls, so this can be left empty or implement controls if needed.
+  }
 
-    const tick = () => {
-      const elapsedTime = clock.getElapsedTime();
+  protected override update(): void {
+    const elapsedTime = this.clock.getElapsedTime();
 
-      // Update objects
-      this.mesh.rotation.y = Math.sin(elapsedTime);
-      this.mesh.rotation.x = Math.cos(elapsedTime);
+    // Custom animation logic for Lesson03
+    this.mesh.rotation.y = Math.sin(elapsedTime);
+    this.mesh.rotation.x = Math.cos(elapsedTime);
 
-      // Update camera
-      this.camera.lookAt(this.mesh.position);
-
-      // Render
-      this.renderer.render(this.scene, this.camera);
-
-      // Call tick again on the next frame
-      window.requestAnimationFrame(tick);
-    };
-
-    tick();
+    this.camera.lookAt(this.mesh.position);
   }
 }

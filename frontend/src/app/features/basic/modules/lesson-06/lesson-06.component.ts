@@ -1,77 +1,38 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  HostListener,
-  ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import * as THREE from 'three';
+import { BaseThreeComponent } from '../../class/component';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 @Component({
   selector: 'app-lesson-06',
   templateUrl: './lesson-06.component.html',
-  styleUrls: ['./lesson-06.component.scss'], // Correct the property name
+  styleUrls: ['./lesson-06.component.scss'],
 })
-export class Lesson06Component implements AfterViewInit {
+export class Lesson06Component extends BaseThreeComponent {
   @ViewChild('canvas', { static: true })
-  private canvasRef!: ElementRef<HTMLCanvasElement>;
+  protected override canvasRef!: ElementRef<HTMLCanvasElement>;
 
-  private scene!: THREE.Scene;
-  private camera!: THREE.PerspectiveCamera;
-  private renderer!: THREE.WebGLRenderer;
-  private controls!: OrbitControls;
-
-  // Cursor tracking
   private cursor = { x: 0, y: 0 };
 
-  constructor() {}
-
-  ngAfterViewInit(): void {
-    this.initThree();
-    this.addRandomGeometry();
-    this.animate();
+  constructor() {
+    super();
   }
 
-  private initThree(): void {
-    // Scene
-    this.scene = new THREE.Scene();
+  protected initScene(): void {
+    this.scene.background = new THREE.Color(0x393d3f);
+  }
 
-    // Sizes
-    const sizes = {
-      width: window.innerWidth,
-      height: window.innerHeight,
-    };
-
-    // Camera
-    const aspectRatio = sizes.width / sizes.height;
-    this.camera = new THREE.PerspectiveCamera(75, aspectRatio, 0.1, 100);
-    this.camera.position.z = 3;
-    this.scene.add(this.camera);
-
-    // Renderer
-    this.renderer = new THREE.WebGLRenderer({
-      canvas: this.canvasRef.nativeElement,
-    });
-    this.onResize(); // Set initial size and pixel ratio
-
-    // Controls
-    this.controls = new OrbitControls(
-      this.camera,
-      this.canvasRef.nativeElement
-    );
-    this.controls.enableDamping = true;
+  protected addObjects(): void {
+    this.addRandomGeometry();
   }
 
   private addRandomGeometry(): void {
     const count = 50;
     const geometry = new THREE.BufferGeometry();
     const positionsArray = new Float32Array(count * 3 * 3);
-
     for (let i = 0; i < count * 3 * 3; i++) {
       positionsArray[i] = (Math.random() - 0.5) * 4; // Random positions
     }
-
     geometry.setAttribute(
       'position',
       new THREE.BufferAttribute(positionsArray, 3)
@@ -84,41 +45,41 @@ export class Lesson06Component implements AfterViewInit {
     this.scene.add(mesh);
   }
 
-  private animate(): void {
-    const tick = () => {
-      // Update controls
-      this.controls.update();
-
-      // Render
-      this.renderer.render(this.scene, this.camera);
-
-      // Keep looping
-      requestAnimationFrame(tick);
-    };
-    tick();
+  protected initCamera(): void {
+    // Assuming the sizes are managed globally or recalculated here
+    const aspectRatio =
+      this.canvasRef.nativeElement.clientWidth /
+      this.canvasRef.nativeElement.clientHeight;
+    this.camera = new THREE.PerspectiveCamera(75, aspectRatio, 0.1, 100);
+    this.camera.position.z = 3;
   }
 
-  @HostListener('window:resize')
-  onResize(): void {
-    // Update sizes
-    const width = window.innerWidth;
-    const height = window.innerHeight;
+  protected initRenderer(): void {
+    this.renderer = new THREE.WebGLRenderer({
+      canvas: this.canvasRef.nativeElement,
+    });
+    this.renderer.setSize(
+      this.canvasRef.nativeElement.clientWidth,
+      this.canvasRef.nativeElement.clientHeight
+    );
+    this.renderer.setPixelRatio(window.devicePixelRatio);
+  }
 
-    // Update camera
-    this.camera.aspect = width / height;
-    this.camera.updateProjectionMatrix();
-
-    // Update renderer
-    this.renderer.setSize(width, height);
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  protected initControls(): void {
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.enableDamping = true;
   }
 
   @HostListener('window:dblclick')
   onDoubleClick(): void {
     if (!document.fullscreenElement) {
-      this.canvasRef.nativeElement.requestFullscreen?.();
-    } else {
-      document.exitFullscreen?.();
+      this.canvasRef.nativeElement.requestFullscreen().catch((err: any) => {
+        console.log(
+          `Error attempting to enable fullscreen mode: ${err.message} (${err.name})`
+        );
+      });
+    } else if (document.exitFullscreen) {
+      document.exitFullscreen();
     }
   }
 
@@ -126,5 +87,9 @@ export class Lesson06Component implements AfterViewInit {
   onMouseMove(event: MouseEvent): void {
     this.cursor.x = (event.clientX / window.innerWidth) * 2 - 1;
     this.cursor.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  }
+
+  protected override update(): void {
+    super.update();
   }
 }

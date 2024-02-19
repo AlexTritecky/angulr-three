@@ -8,7 +8,7 @@ import GUI from 'lil-gui';
 @Component({
   selector: 'app-lesson-10',
   templateUrl: './lesson-10.component.html',
-  styleUrls: ['./lesson-10.component.scss'], // Fix: Use styleUrls instead of styleUrl
+  styleUrls: ['./lesson-10.component.scss'],
 })
 export class Lesson10Component implements AfterViewInit, OnDestroy {
   @ViewChild('canvas', { static: true })

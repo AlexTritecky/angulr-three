@@ -11,7 +11,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 @Component({
   selector: 'app-lesson-08',
   templateUrl: './lesson-08.component.html',
-  styleUrls: ['./lesson-08.component.scss'], // Correct the property name
+  styleUrls: ['./lesson-08.component.scss'],
 })
 export class Lesson08Component implements AfterViewInit {
   @ViewChild('canvas', { static: true })

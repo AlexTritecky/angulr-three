@@ -1,55 +1,26 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  HostListener,
-  ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import * as THREE from 'three';
+import { BaseThreeComponent } from '../../class/component';
 
 @Component({
   selector: 'app-lesson-01',
   templateUrl: './lesson-01.component.html',
   styleUrls: ['./lesson-01.component.scss'],
 })
-export class Lesson01Component implements AfterViewInit {
+export class Lesson01Component extends BaseThreeComponent {
   @ViewChild('canvas', { static: true })
-  private canvasRef!: ElementRef<HTMLCanvasElement>;
+  protected override canvasRef!: ElementRef<HTMLCanvasElement>;
 
-  private scene!: THREE.Scene;
-  private camera!: THREE.PerspectiveCamera;
-  private renderer!: THREE.WebGLRenderer;
-
-  constructor() {}
-
-  ngAfterViewInit(): void {
-    this.initScene();
-    this.addCube();
-    this.addCamera();
-    this.addRenderer();
-    this.renderer.setSize(
-      this.canvasRef.nativeElement.clientWidth,
-      this.canvasRef.nativeElement.clientHeight
-    );
-    this.render();
+  constructor() {
+    super();
   }
 
-  @HostListener('window:resize')
-  onWindowResize(): void {
-    this.camera.aspect =
-      this.canvasRef.nativeElement.clientWidth /
-      this.canvasRef.nativeElement.clientHeight;
-    this.camera.updateProjectionMatrix();
-    this.renderer.setSize(
-      this.canvasRef.nativeElement.clientWidth,
-      this.canvasRef.nativeElement.clientHeight
-    );
-    this.render();
-  }
-
-  private initScene(): void {
-    this.scene = new THREE.Scene();
+  protected initScene(): void {
     this.scene.background = new THREE.Color(0x393d3f);
+  }
+
+  protected addObjects(): void {
+    this.addCube();
   }
 
   private addCube(): void {
@@ -59,7 +30,7 @@ export class Lesson01Component implements AfterViewInit {
     this.scene.add(cube);
   }
 
-  private addCamera(): void {
+  protected initCamera(): void {
     const aspectRatio =
       this.canvasRef.nativeElement.clientWidth /
       this.canvasRef.nativeElement.clientHeight;
@@ -67,13 +38,15 @@ export class Lesson01Component implements AfterViewInit {
     this.camera.position.z = 3;
   }
 
-  private addRenderer(): void {
+  protected initRenderer(): void {
     this.renderer = new THREE.WebGLRenderer({
       canvas: this.canvasRef.nativeElement,
     });
+    this.renderer.setSize(
+      this.canvasRef.nativeElement.clientWidth,
+      this.canvasRef.nativeElement.clientHeight
+    );
   }
 
-  private render(): void {
-    this.renderer.render(this.scene, this.camera);
-  }
+  protected initControls(): void {}
 }
