@@ -36,7 +36,6 @@ export class Lesson01Component implements AfterViewInit {
 
   @HostListener('window:resize')
   onWindowResize(): void {
-    // Adjust the camera aspect ratio and renderer size
     this.camera.aspect =
       this.canvasRef.nativeElement.clientWidth /
       this.canvasRef.nativeElement.clientHeight;

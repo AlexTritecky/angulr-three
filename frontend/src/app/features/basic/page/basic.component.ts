@@ -12,7 +12,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 @Component({
   selector: 'app-basic',
   templateUrl: './basic.component.html',
-  styleUrls: ['./basic.component.scss'], // Correct the property name to styleUrls
+  styleUrls: ['./basic.component.scss'],
 })
 export class BasicComponent implements AfterViewInit, OnDestroy {
   @ViewChild('basicCanvas', { static: true })

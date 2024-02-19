@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 
 import { BasicRoutingModule } from './basic-routing.module';
 import { BasicComponent } from './page/basic.component';
-import { Lesson01Component } from './modules/lesson-01/lesson-01.component';
+import { COMPONENTS } from './modules';
 
 @NgModule({
-  declarations: [BasicComponent, Lesson01Component],
+  declarations: [BasicComponent, ...COMPONENTS],
   imports: [CommonModule, BasicRoutingModule],
 })
 export class BasicModule {}
