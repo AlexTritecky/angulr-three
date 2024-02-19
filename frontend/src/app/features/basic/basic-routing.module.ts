@@ -8,6 +8,8 @@ import { Lesson04Component } from './modules/lesson-04/lesson-04.component';
 import { Lesson05Component } from './modules/lesson-05/lesson-05.component';
 import { Lesson06Component } from './modules/lesson-06/lesson-06.component';
 import { Lesson07Component } from './modules/lesson-07/lesson-07.component';
+import { Lesson08Component } from './modules/lesson-08/lesson-08.component';
+import { Lesson09Component } from './modules/lesson-09/lesson-09.component';
 
 const routes: Routes = [
   {
@@ -47,6 +49,16 @@ const routes: Routes = [
   {
     path: 'lesson-07',
     component: Lesson07Component,
+  },
+
+  {
+    path: 'lesson-08',
+    component: Lesson08Component,
+  },
+
+  {
+    path: 'lesson-09',
+    component: Lesson09Component,
   },
 ];
 

@@ -30,6 +30,9 @@ export class Lesson07Component implements AfterViewInit {
     },
     subdivision: 30,
   };
+  private frameId!: number;
+
+  private gui!: GUI;
 
   private mesh!: THREE.Mesh;
 
@@ -40,6 +43,13 @@ export class Lesson07Component implements AfterViewInit {
     this.addMesh();
     this.setupGui();
     this.animate();
+  }
+
+  ngOnDestroy(): void {
+    if (this.frameId) {
+      cancelAnimationFrame(this.frameId);
+    }
+    if (this.gui) this.gui.destroy();
   }
 
   private initThree(): void {
@@ -85,15 +95,15 @@ export class Lesson07Component implements AfterViewInit {
   }
 
   private setupGui(): void {
-    const gui = new GUI();
-    gui
+    this.gui = new GUI();
+    this.gui
       .add(this.debugObject, 'subdivision', 1, 10, 1)
       .onFinishChange(this.updateGeometry.bind(this));
-    gui
+    this.gui
       .addColor(this.debugObject, 'color')
       .onChange(this.updateMaterialColor.bind(this));
-    gui.add(this.debugObject, 'spin');
-    gui.add(this.material, 'wireframe');
+    this.gui.add(this.debugObject, 'spin');
+    this.gui.add(this.material, 'wireframe');
   }
 
   private updateGeometry(): void {
