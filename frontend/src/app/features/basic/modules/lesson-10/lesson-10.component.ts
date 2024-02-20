@@ -1,127 +1,111 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
-import GUI from 'lil-gui';
+import { BaseThreeComponent } from '../../class/component';
 
 @Component({
   selector: 'app-lesson-10',
   templateUrl: './lesson-10.component.html',
   styleUrls: ['./lesson-10.component.scss'],
 })
-export class Lesson10Component implements AfterViewInit, OnDestroy {
+export class Lesson10Component extends BaseThreeComponent {
   @ViewChild('canvas', { static: true })
-  private canvasRef!: ElementRef<HTMLCanvasElement>;
+  protected override canvasRef!: ElementRef<HTMLCanvasElement>;
 
-  private scene!: THREE.Scene;
-  private camera!: THREE.PerspectiveCamera;
-  private renderer!: THREE.WebGLRenderer;
-  private controls!: OrbitControls;
-  private gui!: GUI;
+  textureLoader!: THREE.TextureLoader;
 
-  constructor() {}
+  constructor() {
+    super();
+  }
 
-  ngAfterViewInit(): void {
-    this.initScene();
-    this.initCamera();
-    this.initRenderer();
-    this.initControls();
+  protected initScene(): void {
+    this.scene.background = new THREE.Color(0x393d3f); // Optional background color
+  }
+
+  protected addObjects(): void {
     this.loadFontsAndTextures();
     this.addDonuts();
-    this.animate();
   }
 
-  ngOnDestroy(): void {
-    if (this.renderer) {
-      this.renderer.domElement.removeEventListener('resize', this.onResize);
-    }
-  }
-
-  private initScene(): void {
-    this.scene = new THREE.Scene();
-  }
-
-  private initCamera(): void {
-    const sizes = {
-      width: window.innerWidth,
-      height: window.innerHeight,
-    };
-    this.camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
+  protected initCamera(): void {
+    this.camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      100
+    );
     this.camera.position.set(1, 1, 2);
-    this.scene.add(this.camera);
-    window.addEventListener('resize', this.onResize);
   }
 
-  private initRenderer(): void {
+  protected initRenderer(): void {
     this.renderer = new THREE.WebGLRenderer({
       canvas: this.canvasRef.nativeElement,
+      antialias: true,
     });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   }
 
-  private initControls(): void {
+  protected initControls(): void {
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.enableDamping = true;
   }
 
   private loadFontsAndTextures(): void {
-    const textureLoader = new THREE.TextureLoader();
-    const matcapTexture = textureLoader.load('assets/images/matcaps/8.png');
-    const donutTexture = textureLoader.load('assets/images/matcaps/4.png');
+    this.textureLoader = new THREE.TextureLoader();
+    const matcapTexture = this.textureLoader.load(
+      'assets/images/matcaps/8.png'
+    );
 
     const fontLoader = new FontLoader();
     fontLoader.load('assets/fonts/helvetiker_regular.typeface.json', (font) => {
       const textGeometry = new TextGeometry('Submarine Agency', {
-        font,
+        font: font,
         size: 0.5,
         height: 0.2,
-        curveSegments: 6,
+        curveSegments: 12,
         bevelEnabled: true,
         bevelThickness: 0.03,
         bevelSize: 0.02,
         bevelOffset: 0,
         bevelSegments: 5,
       });
-
       textGeometry.center();
-      const textMaterial = new THREE.MeshMatcapMaterial({ matcap: matcapTexture });
-      const text = new THREE.Mesh(textGeometry, textMaterial);
-      this.scene.add(text);
+      const textMaterial = new THREE.MeshMatcapMaterial({
+        matcap: matcapTexture,
+      });
+      const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+      this.scene.add(textMesh);
     });
   }
 
   private addDonuts(): void {
-    const donutTexture = new THREE.TextureLoader().load('assets/images/matcaps/4.png');
     const donutGeometry = new THREE.TorusGeometry(0.3, 0.2, 20, 45);
-    const donutMaterial = new THREE.MeshMatcapMaterial({ matcap: donutTexture });
+    const donutMaterial = new THREE.MeshMatcapMaterial({
+      matcap: this.textureLoader.load('assets/images/matcaps/4.png'),
+    });
 
-    for (let i = 0; i < 300; i++) {
+    for (let i = 0; i < 100; i++) {
+      // Adjust the number of donuts as needed
       const donut = new THREE.Mesh(donutGeometry, donutMaterial);
-      donut.position.x = (Math.random() - 0.5) * 10;
-      donut.position.y = (Math.random() - 0.5) * 10;
-      donut.position.z = (Math.random() - 0.5) * 10;
-      donut.rotation.x = Math.random() * Math.PI;
-      donut.rotation.y = Math.random() * Math.PI;
-      const scale = Math.random();
-      donut.scale.set(scale, scale, scale);
+      donut.position.set(
+        (Math.random() - 0.5) * 10,
+        (Math.random() - 0.5) * 10,
+        (Math.random() - 0.5) * 10
+      );
+      donut.rotation.set(
+        Math.random() * Math.PI,
+        Math.random() * Math.PI,
+        Math.random() * Math.PI
+      );
+      donut.scale.setScalar(Math.random() + 0.5);
       this.scene.add(donut);
     }
   }
 
-  private animate = (): void => {
-    requestAnimationFrame(this.animate);
-    this.controls.update();
-    this.renderer.render(this.scene, this.camera);
-  };
-
-  private onResize = (): void => {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    this.camera.aspect = width / height;
-    this.camera.updateProjectionMatrix();
-    this.renderer.setSize(width, height);
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  };
+  protected override update(): void {
+    super.update();
+  }
 }
