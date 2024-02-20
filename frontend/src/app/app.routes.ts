@@ -6,4 +6,17 @@ export const routes: Routes = [
     loadChildren: () =>
       import('./features/basic/basic.module').then((m) => m.BasicModule),
   },
+  {
+    path: 'classic-techniques',
+    loadChildren: () =>
+      import('./features/classic-techniques/classic-techniques.module').then(
+        (m) => m.ClassicTechniquesModule
+      ),
+  },
+
+  {
+    path: '',
+    redirectTo: '/basic',
+    pathMatch: 'full',
+  },
 ];

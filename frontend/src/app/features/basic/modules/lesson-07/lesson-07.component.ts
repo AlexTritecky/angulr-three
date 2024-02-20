@@ -2,7 +2,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import * as THREE from 'three';
 import { gsap } from 'gsap';
 import GUI from 'lil-gui';
-import { BaseThreeComponent } from '../../class/component';
+import { BaseThreeComponent } from '../../../../class/component';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 @Component({

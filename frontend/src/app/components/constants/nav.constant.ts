@@ -3,7 +3,6 @@ export interface NavLink {
   label: string;
 }
 export const NAV_LINKS: NavLink[] = [
-  { path: '', label: 'Home'},
   { path: '/basic', label: 'Basic' },
   { path: '/classic-techniques', label: 'Classic Techniques' },
   { path: '/advanced-techniques', label: 'Advanced Techniques' },

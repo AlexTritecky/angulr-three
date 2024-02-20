@@ -4,7 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 import { gsap } from 'gsap';
 import GUI from 'lil-gui';
-import { BaseThreeComponent } from '../../class/component';
+import { BaseThreeComponent } from '../../../../class/component';
 
 @Component({
   selector: 'app-lesson-09',

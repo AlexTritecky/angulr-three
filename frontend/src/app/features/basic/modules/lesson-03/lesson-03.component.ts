@@ -1,6 +1,6 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import * as THREE from 'three';
-import { BaseThreeComponent } from '../../class/component';
+import { BaseThreeComponent } from '../../../../class/component';
 
 @Component({
   selector: 'app-lesson-03',
