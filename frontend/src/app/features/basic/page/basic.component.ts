@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { NAV_BASIC_LESSONS } from '../constants/navigation.constant';
 
 @Component({
   selector: 'app-basic',
@@ -15,6 +16,8 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
   styleUrls: ['./basic.component.scss'],
 })
 export class BasicComponent implements AfterViewInit, OnDestroy {
+
+  public lessons = NAV_BASIC_LESSONS
   @ViewChild('basicCanvas', { static: true })
   private canvasRef!: ElementRef<HTMLCanvasElement>;
   private renderer!: THREE.WebGLRenderer;

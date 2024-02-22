@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { NAV_ClASSIC_TECHNIQUES_LESSONS } from '../constants/navigation.constant';
 
 @Component({
   selector: 'app-classic-techniques',
@@ -15,6 +16,9 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
   styleUrls: ['./classic-techniques.component.scss'],
 })
 export class ClassicTechniquesComponent implements AfterViewInit, OnDestroy {
+
+  public lessons = NAV_ClASSIC_TECHNIQUES_LESSONS;
+
   @ViewChild('classicCanvas', { static: true })
   private canvasRef!: ElementRef<HTMLCanvasElement>;
 

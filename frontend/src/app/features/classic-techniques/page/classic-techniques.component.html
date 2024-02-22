@@ -1,12 +1,13 @@
 <div class="container">
   <div class="container__nav">
-    <div class="container__nav--item">
-      <a routerLink="lesson-01" routerLinkActive="active">Lesson - 01 </a>
-    </div>
-
-    <div class="container__nav--item">
-      <a routerLink="lesson-02" routerLinkActive="active">Lesson - 02 </a>
-    </div>
+    <a
+      *ngFor="let lesson of lessons"
+      class="container__nav--item"
+      [routerLink]="lesson.path"
+      routerLinkActive="active"
+    >
+      {{ lesson.label }}
+    </a>
   </div>
   <div class="container__animation">
     <canvas #classicCanvas></canvas>

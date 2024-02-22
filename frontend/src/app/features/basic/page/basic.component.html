@@ -1,44 +1,13 @@
 <div class="container">
   <div class="container__nav">
-    <div class="container__nav--item">
-      <a routerLink="lesson-01" routerLinkActive="active">Lesson - 01 </a>
-    </div>
-
-    <div class="container__nav--item">
-      <a routerLink="lesson-02" routerLinkActive="active">Lesson - 02 </a>
-    </div>
-
-    <div class="container__nav--item">
-      <a routerLink="lesson-03" routerLinkActive="active">Lesson - 03 </a>
-    </div>
-
-    <div class="container__nav--item">
-      <a routerLink="lesson-04" routerLinkActive="active">Lesson - 04 </a>
-    </div>
-
-    <div class="container__nav--item">
-      <a routerLink="lesson-05" routerLinkActive="active">Lesson - 05 </a>
-    </div>
-
-    <div class="container__nav--item">
-      <a routerLink="lesson-06" routerLinkActive="active">Lesson - 06 </a>
-    </div>
-
-    <div class="container__nav--item">
-      <a routerLink="lesson-07" routerLinkActive="active">Lesson - 07 </a>
-    </div>
-
-    <div class="container__nav--item">
-      <a routerLink="lesson-08" routerLinkActive="active">Lesson - 08 </a>
-    </div>
-
-    <div class="container__nav--item">
-      <a routerLink="lesson-09" routerLinkActive="active">Lesson - 09 </a>
-    </div>
-
-    <div class="container__nav--item">
-      <a routerLink="lesson-10" routerLinkActive="active">Lesson - 10 </a>
-    </div>
+    <a
+      *ngFor="let lesson of lessons"
+      class="container__nav--item"
+      [routerLink]="lesson.path"
+      routerLinkActive="active"
+    >
+      {{ lesson.label }}
+    </a>
   </div>
   <div class="container__animation">
     <canvas #basicCanvas></canvas>

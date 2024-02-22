@@ -38,6 +38,11 @@ export class Lesson02Component extends BaseThreeComponent {
     this.setupGui();
   }
 
+  override ngOnDestroy(): void {
+    this.gui.destroy();
+    super.ngOnDestroy();
+  }
+
   protected override initCamera(): void {
     this.camera = new THREE.PerspectiveCamera(
       75,
@@ -152,7 +157,6 @@ export class Lesson02Component extends BaseThreeComponent {
     this.gui = new GUI();
 
     const sphereFolder = this.gui.addFolder('Sphere');
-    sphereFolder.add(this.sphere.position, 'y').min(0).max(2).step(0.001);
     sphereFolder.add(this.material, 'roughness').min(0).max(1).step(0.001);
     sphereFolder.addColor(this.material, 'color').name('Color');
     sphereFolder.add(this.material, 'wireframe');
