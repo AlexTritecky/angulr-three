@@ -10,23 +10,20 @@ import {
 import * as THREE from 'three';
 import GUI from 'lil-gui';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { BaseThreeComponent } from '../../../../class/component';
 
 @Component({
   selector: 'app-lesson-03',
   templateUrl: './lesson-03.component.html',
   styleUrl: './lesson-03.component.scss',
 })
-export class Lesson03Component implements AfterViewInit, OnDestroy {
+export class Lesson03Component extends BaseThreeComponent {
   @ViewChild('canvas', { static: true })
-  canvasRef!: ElementRef<HTMLCanvasElement>;
+  override canvasRef!: ElementRef<HTMLCanvasElement>;
 
-  private renderer!: THREE.WebGLRenderer;
-  private camera!: THREE.PerspectiveCamera;
-  private scene!: THREE.Scene;
   private fog!: THREE.Fog;
   private textureLoader!: THREE.TextureLoader;
   private gui!: GUI;
-  private controls!: OrbitControls;
   private clock = new THREE.Clock();
 
   private door!: THREE.Mesh;
@@ -38,8 +35,6 @@ export class Lesson03Component implements AfterViewInit, OnDestroy {
   private bush2!: THREE.Mesh;
   private bush3!: THREE.Mesh;
   private bush4!: THREE.Mesh;
-
-  private frameId: number | null = null;
 
   // Door textures
   private doorColorTexture!: THREE.Texture;
@@ -73,40 +68,38 @@ export class Lesson03Component implements AfterViewInit, OnDestroy {
   private ghost2!: THREE.PointLight;
   private ghost3!: THREE.PointLight;
 
-  constructor() {}
-
-  @HostListener('window:resize', ['$event'])
-  onResize(event?: Event): void {
-    this.updateCameraAspectRatio();
-    this.updateRendererSize();
+  constructor() {
+    super();
   }
 
-  ngAfterViewInit(): void {
+  protected override initScene(): void {
     this.initThree();
     this.initTextures();
-    this.initObjects();
+    this.addObjects();
     this.initLight();
-
-    this.animate();
     this.setupGui();
   }
 
-  ngOnDestroy(): void {
-    if (this.frameId != null) {
-      cancelAnimationFrame(this.frameId);
-    }
-    this.renderer.dispose();
-  }
-
   private initThree(): void {
-    const canvas = this.canvasRef.nativeElement;
-
     this.scene = new THREE.Scene();
     this.fog = new THREE.Fog('#263537', 1, 15);
     this.scene.fog = this.fog;
 
-    this.initializeCamera();
+    this.initializeOrbitControls();
+  }
 
+  protected initCamera(): void {
+    this.initializeCamera();
+  }
+
+  private initTextures(): void {
+    this.initDoorTextures();
+    this.initBrickTextures();
+    this.initGrassTextures();
+  }
+
+  protected initRenderer(): void {
+    const canvas = this.canvasRef.nativeElement;
     this.renderer = new THREE.WebGLRenderer({
       canvas: canvas,
       antialias: true,
@@ -118,20 +111,6 @@ export class Lesson03Component implements AfterViewInit, OnDestroy {
 
     this.textureLoader = new THREE.TextureLoader();
     this.updateRendererSize();
-    this.initializeOrbitControls();
-  }
-
-  private initTextures(): void {
-    this.initDoorTextures();
-    this.initBrickTextures();
-    this.initGrassTextures();
-  }
-
-  private initObjects(): void {
-    this.initHouseGroup();
-    this.initGravesGroup();
-    this.initFloor();
-    this.initBrushes();
   }
 
   private initializeCamera(): void {
@@ -167,19 +146,6 @@ export class Lesson03Component implements AfterViewInit, OnDestroy {
       this.canvasRef.nativeElement.parentElement?.clientHeight ||
       window.innerHeight;
     this.renderer.setSize(width, height);
-  }
-
-  private updateCameraAspectRatio(): void {
-    const width =
-      this.canvasRef.nativeElement.parentElement?.clientWidth ||
-      window.innerWidth;
-    const height =
-      this.canvasRef.nativeElement.parentElement?.clientHeight ||
-      window.innerHeight;
-    if (this.camera) {
-      this.camera.aspect = width / height;
-      this.camera.updateProjectionMatrix();
-    }
   }
 
   private initLight(): void {
@@ -238,9 +204,7 @@ export class Lesson03Component implements AfterViewInit, OnDestroy {
     this.ghost3.shadow.camera.far = 7;
   }
 
-  private animate(): void {
-    this.frameId = requestAnimationFrame(this.animate.bind(this));
-
+  protected override update(): void {
     const elapsedTime = this.clock.getElapsedTime();
 
     const ghost1Angle = elapsedTime * 0.5;
@@ -267,6 +231,12 @@ export class Lesson03Component implements AfterViewInit, OnDestroy {
     this.controls.update();
 
     this.renderer.render(this.scene, this.camera);
+    super.update();
+  }
+
+  protected override initControls(): void {
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.enableDamping = true;
   }
 
   private setupGui(): void {
@@ -278,6 +248,13 @@ export class Lesson03Component implements AfterViewInit, OnDestroy {
     this.gui.add(this.moonLight.position, 'x').min(-5).max(5).step(0.001);
     this.gui.add(this.moonLight.position, 'y').min(-5).max(5).step(0.001);
     this.gui.add(this.moonLight.position, 'z').min(-5).max(5).step(0.001);
+  }
+
+  protected override addObjects(): void {
+    this.initHouseGroup();
+    this.initGravesGroup();
+    this.initFloor();
+    this.initBrushes();
   }
 
   private initHouseGroup(): void {
