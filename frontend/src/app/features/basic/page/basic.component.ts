@@ -149,10 +149,9 @@ export class BasicComponent implements AfterViewInit, OnDestroy {
   private addParticles(): void {
     const particlesGeometry = new THREE.BufferGeometry();
     const particlesCount = 500;
-    const posArray = new Float32Array(particlesCount * 3); // x,y,z for each particle
+    const posArray = new Float32Array(particlesCount * 3);
 
     for (let i = 0; i < particlesCount * 3; i++) {
-      // Distribute particles around the sphere
       posArray[i] = (Math.random() - 0.5) * 5;
     }
 
