@@ -10,4 +10,5 @@ export const NAV_LINKS: NavLink[] = [
   { path: '/extra', label: 'Extra' },
   { path: '/portal-scene', label: 'Portal Scene' },
   { path: '/angular-three-fiber', label: 'Angular Three Fiber' },
+  { path: '/audio', label: 'Audio' },
 ];

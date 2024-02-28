@@ -15,6 +15,12 @@ export const routes: Routes = [
   },
 
   {
+    path: 'audio',
+    loadChildren: () =>
+      import('./features/audio/audio.module').then((m) => m.AudioModule),
+  },
+
+  {
     path: '',
     redirectTo: '/basic',
     pathMatch: 'full',
