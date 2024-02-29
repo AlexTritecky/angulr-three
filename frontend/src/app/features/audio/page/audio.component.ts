@@ -33,7 +33,6 @@ export class AudioComponent implements AfterViewInit {
 
   private initVisualization(): void {
     this.device = new DeviceChecker();
-    const isMobile = this.device.isMobile();
     const isRetina = this.device.isRetina();
 
     this.analyzer = new AudioAnalyzer();

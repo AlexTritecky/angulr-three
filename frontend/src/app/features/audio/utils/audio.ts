@@ -1,6 +1,4 @@
-// Import necessary Angular and RxJS components
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -149,6 +147,4 @@ export class AudioAnalyzer {
   triggerPulse(isPulse: boolean): void {
     this.isPulse = isPulse;
   }
-
-  // debug method remains similar, ensuring it is called with a valid HTMLCanvasElement
 }

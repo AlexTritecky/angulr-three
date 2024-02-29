@@ -1,4 +1,3 @@
-// Assuming Three.js and dat.GUI are accessible in your project
 import * as THREE from 'three';
 import * as dat from 'dat.gui';
 import { Injectable } from '@angular/core';
@@ -52,18 +51,13 @@ export class Ctrl {
     this.gui
       .add(this.blob, 'showHdr')
       .onFinishChange(() => this.blob.toggleCubemap());
-
-    // Additional GUI controls can be added here following the same pattern
     this.updateParams();
   }
 
   private updateParams(): void {
     let p = this.params;
-
-    // Assuming these methods exist on the blob, audio, and light objects
     this.blob.debugShadowMap(p.debug_shadow_map);
     this.audio.setGain(p.audio_gain);
-    // Assuming setLightPos is expecting a THREE.Vector3
     this.light.setLightPosition(
       new THREE.Vector3(p.light_posx, p.light_posy, p.light_posz)
     );
