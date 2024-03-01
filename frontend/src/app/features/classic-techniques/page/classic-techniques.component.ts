@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { NAV_ClASSIC_TECHNIQUES_LESSONS } from '../constants/navigation.constant';
 
 @Component({
@@ -16,7 +17,6 @@ import { NAV_ClASSIC_TECHNIQUES_LESSONS } from '../constants/navigation.constant
   styleUrls: ['./classic-techniques.component.scss'],
 })
 export class ClassicTechniquesComponent implements AfterViewInit, OnDestroy {
-
   public lessons = NAV_ClASSIC_TECHNIQUES_LESSONS;
 
   @ViewChild('classicCanvas', { static: true })
@@ -86,17 +86,26 @@ export class ClassicTechniquesComponent implements AfterViewInit, OnDestroy {
   }
 
   private initSunSphere(): void {
-    const textureLoader = new THREE.TextureLoader();
-    const sunTexture = textureLoader.load('assets/images/2k_sun.jpg');
-
-    const material = new THREE.MeshBasicMaterial({ map: sunTexture });
-
-    this.sphere = new THREE.Mesh(new THREE.SphereGeometry(1, 30, 30), material);
-    this.scene.add(this.sphere);
-
-    const light = new THREE.PointLight(0xffffff, 2, 100);
-    light.position.set(0, 0, 2); // Position the light a bit in front of the sun
-    this.scene.add(light);
+    const loader = new GLTFLoader();
+    loader.load('assets/models/THE3SUN.gltf', (gltf) => {
+      gltf.scene.traverse(function (child) {
+        if ((child as THREE.Mesh).isMesh) {
+          const m = child as THREE.Mesh;
+          m.receiveShadow = true;
+          m.castShadow = true;
+        }
+        if ((child as THREE.Light).isLight) {
+          const l = child as THREE.Light;
+          l.castShadow = true;
+          if (l instanceof THREE.PointLight) {
+            l.shadow.bias = -0.003;
+            l.shadow.mapSize.width = 2048;
+            l.shadow.mapSize.height = 2048;
+          }
+        }
+      });
+      this.scene.add(gltf.scene);
+    });
   }
 
   private animate(): void {
